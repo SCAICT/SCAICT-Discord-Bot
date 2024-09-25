@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "--password=${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 600s
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./static:/docker-entrypoint-initdb.d
+    networks:
+      - backnet
+    env_file:
+      - .env
+    expose:
+      - 3306
+
+  web:
+    build:
+      context: .
+      dockerfile: .docker/web/Dockerfile
+      target: production
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5000:5000"
+    networks:
+      - backnet
+      - frontnet
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  bot:
+    build:
+      context: .
+      dockerfile: .docker/bot/Dockerfile
+      target: production
+    restart: unless-stopped
+    networks:
+      - backnet
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  nginx:
+    build:
+      context: .docker/nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on: 
+      - web
+    networks:
+      - frontnet
+    # volumes:
+    #   - ./ssl:/etc/nginx/ssl:ro
+    #   - ./nginx-logs:/var/log/nginx
+
+volumes:
+  db-data:
+
+networks:
+  backnet:
+  frontnet:
