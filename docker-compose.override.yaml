@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      target: development
+    volumes:
+      - .:/app
+  bot:
+    build:
+      target: development
+    volumes:
+      - .:/app
