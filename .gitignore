@@ -43,3 +43,4 @@ read.txt
 
 # Docker
 docker-compose.override.yml
+log/
