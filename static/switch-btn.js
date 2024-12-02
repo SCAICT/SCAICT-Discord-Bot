@@ -39,7 +39,7 @@ function switchRight(){//右邊，10連
 	activeSwitch.style.left = '50%';
 	numDraws.value=10;
 	changeMachine('#FF0000', '#FF4500', '#B22222', '#8B0000');
-	achine('#FFD700', '#FFA500', '#FF6347', '#d76a1d');
+	achine('#FFD700', '#FFA500', '#FF6347', '#d76a1d');// Suspected Redundant Code
 }
 
 switchBtnLeft.addEventListener('click', function(){

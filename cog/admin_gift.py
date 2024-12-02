@@ -1,5 +1,6 @@
 # Standard imports
 from datetime import datetime
+import traceback
 
 # Third-party imports
 import discord
@@ -76,6 +77,10 @@ class SendGift(Build):
             button.disabled = True  # 關閉按鈕，避免重複點擊
             await ctx.response.edit_message(view=self)
 
+    def cache_users_by_name(self):
+        # 將所有使用者名稱和對應的使用者物件存入字典
+        return {user.name: user for user in self.bot.users}
+
     @discord.slash_command(name="發送禮物", description="dm_gift")
     async def send_dm_gift(
         self,
@@ -89,6 +94,7 @@ class SendGift(Build):
         if not ctx.author.guild_permissions.administrator:
             await ctx.respond("你沒有權限使用這個指令！", ephemeral=True)
             return
+        SendGift.user_cache = self.cache_users_by_name()
         try:
             await ctx.defer()  # 確保機器人請求不會超時
             # 不能發送負數
@@ -96,24 +102,28 @@ class SendGift(Build):
                 await ctx.respond("不能發送 0 以下個禮物！", ephemeral=True)
                 return
             manager = ctx.author  # return <class 'discord.member.Member'>
-            print(type(manager))
             target_usernames = target_str.split(",")
             target_users = []
 
             async def fetch_user_by_name(name):
                 user_obj = discord.utils.find(lambda u: u.name == name, self.bot.users)
                 if user_obj:
-                    return await self.bot.fetch_user(user_obj.id)
+                    try:
+                        return await self.bot.fetch_user(user_obj.id)
+                    except Exception as e:
+                        print(f"Failed to fetch user with ID {user_obj.id}: {str(e)}")
+                        return None
 
             for username in target_usernames:
                 username = username.strip()
+                if username not in SendGift.user_cache:
+                    continue
                 try:
                     user = await fetch_user_by_name(username)
                     target_users.append(user)
                 except (ValueError, Exception) as e:
                     await ctx.respond(f"找不到使用者 ： {username}{e}", ephemeral=True)
                     return
-
             # DM 一個 Embed 和領取按鈕
             for target_user in target_users:
                 await send_gift_button(
@@ -124,6 +134,7 @@ class SendGift(Build):
                 f"{manager} 已發送 {count} {gift_type} 給 {', '.join([user.name for user in target_users])}"
             )
         except Exception as e:
+            traceback.print_exc()
             await ctx.respond(f"伺服器內部出現錯誤：{e}", ephemeral=True)
 
 

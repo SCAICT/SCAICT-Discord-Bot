@@ -189,8 +189,9 @@ for further information.
   MySQL/MariaDB.
 * Column names should be unique, i.e., same column name should not exist in
   different tables.
-* Column names should be prefixed with table names or abbrieviations.
-  * For example, `user_id` in `user`, `ug_user` in `user_groups`.
+* Column names should be prefixed with table names or abbreviations.
+  * For example, `user_id` column in `user` table, `ug_user` column in
+    `user_groups` table.
 
 Examples:
 
@@ -212,5 +213,6 @@ UPDATE game SET game_seq = game_seq + 1
 
 ### Development dependencies
 
+* black: <https://black.readthedocs.io>
 * pylint: <https://pylint.readthedocs.io>
 * pytest: <https://docs.pytest.org>

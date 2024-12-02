@@ -141,7 +141,7 @@ class Comment(commands.Cog):
         try:
             # 新增該user的資料表
             if not user_id_exists(user_id, "user", cursor):
-                # 該 uesr id 不在user資料表內，插入該筆使用者資料
+                # 該 user id 不在user資料表內，插入該筆使用者資料
                 insert_user(user_id, "user", cursor)
             if not user_id_exists(user_id, "comment_points", cursor):
                 insert_user(user_id, "comment_points", cursor)
@@ -187,7 +187,7 @@ class Comment(commands.Cog):
             # Allow both plain and monospace formatting
             based_number = re.sub("^`([^\n]+)`$", "\\1", raw_content)
 
-            # If is valid 4-digit whitespace delimeter format
+            # If is valid 4-digit whitespace delimiter format
             # (with/without base), then strip whitespace characters.
             #
             # Test cases:
@@ -209,7 +209,7 @@ class Comment(commands.Cog):
                 based_number,
             ):
                 based_number = based_number.replace(" ", "")
-            # If is valid 3-digit comma delimeter format
+            # If is valid 3-digit comma delimiter format
             # (10-based, without base)
             elif counting_base == 10 and re.match(
                 "^([0-9]{1,3}(,[0-9]{3})*)$", based_number
