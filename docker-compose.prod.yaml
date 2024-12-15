@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      target: production
+  bot:
+    build:
+      target: production
