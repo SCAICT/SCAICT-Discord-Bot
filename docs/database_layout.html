@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAICT-uwu database table layout diagram</title>
+<style>
+.mw-parser-output .mw-tpl-schemadiagram-caption,
+.mw-parser-output .mw-tpl-schemadiagram,
+.mw-parser-output .mw-tpl-schemadiagram-table {
+    font-family: sans-serif;
+    line-height: 1.6;
+    font-size: 12px;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-caption a,
+.mw-parser-output .mw-tpl-schemadiagram a {
+    text-decoration: none;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-caption a:hover,
+.mw-parser-output .mw-tpl-schemadiagram-caption a:focus,
+.mw-parser-output .mw-tpl-schemadiagram a:hover,
+.mw-parser-output .mw-tpl-schemadiagram a:focus {
+    text-decoration: underline;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-caption {
+    display: inline-block;
+    margin: 0 1em 1em 0;
+    padding: 0 24px;
+    border: 1px solid #a2a9b1;
+    background: #eaecf0;
+    font-family: sans-serif;
+    line-height: 1.6;
+    font-size: 12px;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-caption a.external,
+.mw-parser-output .mw-tpl-schemadiagram a.external {
+    background: none;
+    padding: 0;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-fullscreen a .mw-ui-button {
+    line-height: 1.6em;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+body.mediawiki .mw-parser-output .mw-tpl-schemadiagram {
+    max-width: 170em;
+}
+
+body:not(.mediawiki) .mw-parser-output .mw-tpl-schemadiagram {
+    width: 170em;
+}
+
+body:not(.mediawiki) .mw-parser-output .mw-tpl-schemadiagram-fullscreen {
+    display: none;
+}
+
+body:not(.mediawiki) .mw-parser-output .mw-tpl-schemadiagram-credit a,
+body:not(.mediawiki) .mw-parser-output .mw-tpl-schemadiagram-credit a.external{
+    color: inherit;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-group {
+    border: 1px solid #a2a9b1;
+    margin: 0 1em 1em 0;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-group h2,
+.mw-parser-output .mw-tpl-schemadiagram-group .mw-heading2 {
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    border: 0;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-group h2 {
+    display: table;
+    padding: 0.4em 1.2em 0.2em 0.6em;
+    background: #fff;
+    color: #404244;
+    font-weight: bold;
+    border: 1px solid #a2a9b1;
+    border-width: 0 1px 1px 0;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-group tr {
+    vertical-align: baseline;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-table {
+    margin: 1em 0.8em 1em 0.9em;
+    border: 1px solid #c8ccd1;
+    background: #fff;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-table h3,
+.mw-parser-output .mw-tpl-schemadiagram-group .mw-heading3 {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    border: 0;
+    display: block;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-table h3 {
+    padding: 0 4px 0 26px;
+    background: #eaecf0 url("https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/OOjs_UI_icon_table.svg/24px-OOjs_UI_icon_table.svg.png") no-repeat 7px 50%;
+    background-size: 12px;
+    color: #111;
+    line-height: 2.3;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-table h3 a {
+    color: inherit;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-table ul {
+    margin: 3px 6px;
+    padding: 0;
+    list-style: none;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-field {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+    cursor: help;
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-field--primary {
+    background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/OOjs_UI_icon_key.svg/32px-OOjs_UI_icon_key.svg.png") no-repeat 0 50%;
+    background-size: 16px;
+    border: 0;
+    transform: rotate(-45deg);
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-field--notnull {
+    background: #36c;
+    border: 1px solid #72777d;
+    transform: rotate(-45deg) scale(0.6)
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-field--regular {
+    border: 1px solid #36c;
+    transform: rotate(-45deg) scale(0.6);
+}
+
+.mw-parser-output .mw-tpl-schemadiagram-credit {
+    flex-basis: 100%;
+    border-top: 1px solid #c8ccd1;
+    padding: 1em;
+    text-align: right;
+    font-size: 10px;
+}
+</style>
+</head>
+<body>
+<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr">
+<div class="mw-tpl-schemadiagram-caption">
+<p><b>Database schema of SCAICT-uwu</b>.</p>
+</div>
+<div class="mw-tpl-schemadiagram">
+<div class="mw-tpl-schemadiagram-group mw-tpl-schemadiagram-group--green" style="background: #dafdd5;">
+<div class="mw-heading mw-heading2">
+<h2 id="User">User</h2>
+</div>
+<table>
+<tbody>
+<tr>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="user_2">user</h3>
+</div>
+<ul>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> DCname VARCHAR(32)</li>
+<li><span title="Primary key" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--primary"></span> uid BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> DCMail VARCHAR(320)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> githubName VARCHAR(39)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> githubMail VARCHAR(320)</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> loveuwu TINYINT(1)</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> point INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> ticket INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> charge_combo INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> next_lottery INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> last_charge DATETIME</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> last_comment DATE</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> today_comments INT</li>
+</ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mw-tpl-schemadiagram-group mw-tpl-schemadiagram-group--green" style="background: #eaf3ff;">
+<div class="mw-heading mw-heading2">
+<h2 id="Comment_points">Comment points</h2>
+</div>
+<table>
+<tbody>
+<tr>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="comment_points_2">comment_points</h3>
+</div>
+<ul>
+<li>
+<span title="Primary key" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--primary"></span> seq INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> uid BIGINT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> times INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> next_reward INT</li>
+</ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mw-tpl-schemadiagram-group mw-tpl-schemadiagram-group--green" style="background: #eaf3ff;">
+<div class="mw-heading mw-heading2">
+<h2 id="Game">Game</h2>
+</div>
+<table>
+<tbody>
+<tr>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="game_2">game</h3>
+</div>
+<ul>
+<li>
+<span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> seq BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> lastID BIGINT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> niceColor VARCHAR(3)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> nicecolorround INT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> niceColorCount BIGINT</li>
+</ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mw-tpl-schemadiagram-group mw-tpl-schemadiagram-group--green" style="background: #eaf3ff;">
+<div class="mw-heading mw-heading2">
+<h2 id="Gift">Gift</h2>
+</div>
+<table>
+<tbody>
+<tr>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="gift_2">gift</h3>
+</div>
+<ul>
+<li>
+<span title="Primary key" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--primary"></span> btnID BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> type ENUM(…)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> count INT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> recipient VARCHAR(32)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> received TINYINT(1)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> sender VARCHAR(32)</li>
+</ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mw-tpl-schemadiagram-group mw-tpl-schemadiagram-group--green" style="background: #fef6e7;">
+<div class="mw-heading mw-heading2">
+<h2 id="CTF">CTF</h2>
+</div>
+<table>
+<tbody>
+<tr>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="ctf_data">ctf_data</h3>
+</div>
+<ul>
+<li>
+<span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> id BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> flags VARCHAR(255)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> score INT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> restrictions VARCHAR(255)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> message_id BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> case_status TINYINT(1)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> start_time DATETIME</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> end_time VARCHAR(255)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> title VARCHAR(255)</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> tried INT</li>
+</ul>
+</div>
+</td>
+<td>
+<div class="mw-tpl-schemadiagram-table">
+<div class="mw-heading mw-heading3">
+<h3 id="ctf_history">ctf_history</h3>
+</div>
+<ul>
+<li>
+<span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> data_id BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> uid BIGINT</li>
+<li><span title="Optional (May be null)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--regular"></span> count INT</li>
+<li><span title="Required (Not nullable)" class="mw-tpl-schemadiagram-field mw-tpl-schemadiagram-field--notnull"></span> solved TINYINT(1)</li>
+</ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="mw-tpl-schemadiagram-credit"></p>
+</div>
+</body>
+</html>

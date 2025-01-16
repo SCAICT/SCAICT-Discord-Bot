@@ -12,12 +12,20 @@
 ## Python
 **/__pycache__
 *.egg-info/
+build/lib/
 ## Linux
 flakLog.out
 nohup.out
 pointLog.out
 ## Configuration files
 .env
+# python 虛擬環境
+bin/
+envuwu/
+env-uwu/
+lib/
+lib64
+pyvenv.cfg
 ### Ignore token
 ### 如果你的token.json已經被追蹤可以執行:
 ### 1. git rm --cached token.json

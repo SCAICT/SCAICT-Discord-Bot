@@ -1,0 +1,427 @@
+[
+	{
+		"name": "user",
+		"comment": "The user table contains basic user information, user properties, etc.",
+		"columns": [
+			{
+				"name": "DCname",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 32,
+					"default": null
+				}
+			},
+			{
+				"name": "uid",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": {
+					"notnull": true
+				}
+			},
+			{
+				"name": "DCMail",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 320,
+					"default": null
+				}
+			},
+			{
+				"name": "githubName",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 39,
+					"default": null
+				}
+			},
+			{
+				"name": "githubMail",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 320,
+					"default": null
+				}
+			},
+			{
+				"name": "loveuwu",
+				"comment": "",
+				"type": "tinyint",
+				"options": {
+					"length": 1,
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "point",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "ticket",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 1
+				}
+			},
+			{
+				"name": "charge_combo",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "next_lottery",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "last_charge",
+				"comment": "",
+				"type": "datetime",
+				"options": {
+					"notnull": true,
+					"default": "1970-01-01 00:00:00"
+				}
+			},
+			{
+				"name": "last_comment",
+				"comment": "",
+				"type": "date",
+				"options": {
+					"notnull": true,
+					"default": "1970-01-01"
+				}
+			},
+			{
+				"name": "today_comments",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			}
+		],
+		"indexes": [],
+		"pk": [
+			"uid"
+		]
+	},
+	{
+		"name": "comment_points",
+		"comment": "",
+		"columns": [
+			{
+				"name": "seq",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": {
+					"autoincrement": true,
+					"notnull": true
+				}
+			},
+			{
+				"name": "uid",
+				"comment": "Foreign key",
+				"type": "bigint",
+				"options": {
+					"notnull": true
+				}
+			},
+			{
+				"name": "times",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 2
+				}
+			},
+			{
+				"name": "next_reward",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"notnull": true,
+					"default": 1
+				}
+			}
+		],
+		"indexes": [],
+		"pk": [
+			"seq"
+		]
+	},
+	{
+		"name": "game",
+		"comment": "",
+		"columns": [
+			{
+				"name": "seq",
+				"comment": "",
+				"type": "bigint",
+				"options": {
+					"notnull": true,
+					"default": 0
+				}
+			},
+			{
+				"name": "lastID",
+				"comment": "",
+				"type": "bigint",
+				"options": {
+					"default": 0
+				}
+			},
+			{
+				"name": "niceColor",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 3,
+					"notnull": true,
+					"default": "FFF"
+				}
+			},
+			{
+				"name": "nicecolorround",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "niceColorCount",
+				"comment": "",
+				"type": "bigint",
+				"options": {
+					"default": 0
+				}
+			}
+		],
+		"indexes": [],
+		"pk": []
+	},
+	{
+		"name": "gift",
+		"comment": "",
+		"columns": [
+			{
+				"name": "btnID",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": {
+					"notnull": true
+				}
+			},
+			{
+				"name": "type",
+				"comment": "",
+				"type": "enum",
+				"options": {
+					"enum": [
+						"電電點",
+						"抽獎券"
+					],
+					"default": null
+				}
+			},
+			{
+				"name": "count",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "recipient",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 32,
+					"default": null
+				}
+			},
+			{
+				"name": "received",
+				"comment": "",
+				"type": "tinyint",
+				"options": {
+					"length": 1,
+					"default": 0
+				}
+			},
+			{
+				"name": "sender",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 32,
+					"default": "admin"
+				}
+			}
+		],
+		"indexes": [],
+		"pk": [
+			"btnID"
+		]
+	},
+	{
+		"name": "ctf_data",
+		"comment": "",
+		"columns": [
+			{
+				"name": "id",
+				"comment": "Primary key",
+				"type": "bigint",
+				"options": {
+					"notnull": true
+				}
+			},
+			{
+				"name": "flags",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 255,
+					"default": null
+				}
+			},
+			{
+				"name": "score",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "restrictions",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 255,
+					"default": null
+				}
+			},
+			{
+				"name": "message_id",
+				"comment": "",
+				"type": "bigint",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "case_status",
+				"comment": "",
+				"type": "tinyint",
+				"options": {
+					"length": 1,
+					"default": null
+				}
+			},
+			{
+				"name": "start_time",
+				"comment": "",
+				"type": "datetime",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "end_time",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 255,
+					"default": null
+				}
+			},
+			{
+				"name": "title",
+				"comment": "",
+				"type": "string",
+				"options": {
+					"length": 255,
+					"default": null
+				}
+			},
+			{
+				"name": "tried",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"default": null
+				}
+			}
+		],
+		"indexes": [],
+		"pk": [
+			"seq"
+		]
+	},
+	{
+		"name": "ctf_history",
+		"comment": "",
+		"columns": [
+			{
+				"name": "data_id",
+				"comment": "Foreign key",
+				"type": "bigint",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "uid",
+				"comment": "",
+				"type": "bigint",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "count",
+				"comment": "",
+				"type": "integer",
+				"options": {
+					"default": null
+				}
+			},
+			{
+				"name": "solved",
+				"comment": "",
+				"type": "tinyint",
+				"options": {
+					"length": 1,
+					"notnull": true,
+					"default": 0
+				}
+			}
+		],
+		"indexes": [],
+		"pk": []
+	}
+]

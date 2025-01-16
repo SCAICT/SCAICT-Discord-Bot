@@ -37,7 +37,7 @@ stickers = get_channels()["stickers"]["zap"]
 class Game(commands.Cog):
     # User can use this command to play ✊-🤚-✌️ with the bot in the command channel
     @discord.slash_command(name="rock_paper_scissors", description="玩剪刀石頭布")
-    # useser can choose ✊, 🤚, or ✌️ in their command
+    # user can choose ✊, 🤚, or ✌️ in their command
     async def rock_paper_scissors(
         self, interaction, choice: discord.Option(str, choices=["✊", "🤚", "✌️"])
     ):
