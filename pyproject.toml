@@ -5,7 +5,7 @@
 name = "scaict-uwu"
 # PEP 440
 # @see https://sethmlarson.dev/pep-440
-version = "0.1.9.dev0"
+version = "0.2.0"
 description = "A cat living in SCAICT Discord server."
 readme.file = "README.md"
 readme.content-type = "text/markdown"
@@ -28,15 +28,15 @@ urls.repository = "https://github.com/SCAICT/SCAICT-uwu.git"
 urls.issues = "https://github.com/SCAICT/SCAICT-uwu/issues"
 # Lock file: requirements.txt
 dependencies = [
-	"flask == 3.0.3",
-	"mysql-connector-python == 8.4.0",
-	"py-cord == 2.6.0",
+	"flask == 3.1.0",
+	"mysql-connector-python == 9.2.0",
+	"py-cord == 2.6.1",
 	"python-dotenv == 1.0.1",
 	"requests == 2.32.3",
 ]
 # Lock file: requirements_dev.txt
 optional-dependencies.dev = [
-	"black == 24.8.0",
-	"pylint == 3.2.6",
-	"pytest == 8.3.2",
+	"black == 25.1.0",
+	"pylint == 3.3.4",
+	"pytest == 8.3.4",
 ]

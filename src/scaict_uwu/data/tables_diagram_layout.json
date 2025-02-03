@@ -1,0 +1,38 @@
+[
+	{
+		"title": "User",
+		"color": "#dafdd5",
+		"tables": [
+			[ "user" ]
+		]
+	},
+	{
+		"title": "Comment points",
+		"color": "#eaf3ff",
+		"tables": [
+			[ "comment_points" ]
+		]
+	},
+	{
+		"title": "Game",
+		"color": "#eaf3ff",
+		"tables": [
+			[ "game" ]
+		]
+	},
+	{
+		"title": "Gift",
+		"color": "#eaf3ff",
+		"tables": [
+			[ "gift" ]
+		]
+	},
+	{
+		"title": "CTF",
+		"color": "#fef6e7",
+		"tables": [
+			[ "ctf_data" ],
+			[ "ctf_history" ]
+		]
+	}
+]

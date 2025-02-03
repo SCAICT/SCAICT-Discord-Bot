@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json-schema.org/schema#",
 	"description": "Abstract description of a scaict-uwu database table, derived from MediaWiki database table schema",
-	"type": "object",
+	"type": "array",
 	"additionalProperties": false,
 	"properties": {
 		"name": {
@@ -41,6 +41,7 @@
 							"datetime",
 							"datetimetz",
 							"decimal",
+							"enum",
 							"float",
 							"integer",
 							"smallint",
@@ -78,6 +79,13 @@
 								"description": "Length of the field.",
 								"default": null,
 								"minimum": 0
+							},
+							"enum": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"uniqueItems": true
 							},
 							"notnull": {
 								"type": "boolean",
@@ -121,7 +129,7 @@
 									},
 									"enum_values": {
 										"type": "array",
-										"description": "Values to use with type 'mwenum'",
+										"description": "Values to use with type 'enum'",
 										"additionalItems": false,
 										"items": {
 											"type": "string"

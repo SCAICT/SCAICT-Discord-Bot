@@ -1,0 +1,38 @@
+name: Merge
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  merge:
+    permissions:
+      contents: write
+      pull-requests: write
+    if:
+      github.event.review.state == 'approved' &&
+      (
+        github.event.review.author_association == 'OWNER' ||
+        github.event.review.author_association == 'MEMBER' ||
+        github.event.review.author_association == 'COLLABORATOR'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set Git config
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Rebase to target branch when needed in order to fast-forward merge
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git rebase origin/${{ github.event.pull_request.base.ref }}
+      - name: Push back source branch (head)
+        run: |
+          git push "${{ github.event.pull_request.head.repo.clone_url }}" HEAD:${{ github.event.pull_request.head.ref }} --force
+      - name: Push to target branch (base)
+        run: |
+          # git push "${{ github.event.pull_request.base.repo.clone_url }}" ${{ github.event.pull_request.base.ref }}
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}

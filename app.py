@@ -3,6 +3,7 @@ import json
 import os
 import random
 from urllib.parse import urlencode
+import traceback
 
 # Third-party imports
 from flask import (
@@ -16,6 +17,7 @@ from flask import (
     jsonify,
 )
 import requests
+from dotenv import load_dotenv
 
 # Local imports
 from cog.core.sql import write
@@ -23,23 +25,28 @@ from cog.core.sql import read
 from cog.core.sql import link_sql
 from cog.core.sql import end
 from cog.core.sql import user_id_exists
+from cog.api.api import Apis
+from cog.api.gift import Gift
 
 app = Flask(__name__)
+load_dotenv(f"{os.getcwd()}/.env", verbose=True, override=True)
 
-# FILEPATH: /d:/GayHub/SCAICT-Discord-Bot/token.json
-with open(f"{os.getcwd()}/token.json", encoding="utf-8") as token_file:
-    token_data = json.load(token_file)
-
-app.secret_key = token_data["secret_key"]
-discord_client_id = token_data["discord_client_id"]
-discord_client_secret = token_data["discord_client_secret"]
-discord_redirect_uri = token_data["discord_redirect_uri"]
-github_client_id = token_data["github_client_id"]
-github_client_secret = token_data["github_client_secret"]
-github_redirect_uri = token_data["github_redirect_uri"]
-github_discord_redirect_uri = token_data["github_discord_redirect_uri"]
-discord_token = token_data["discord_token"]
-send_gift_role = token_data["send_gift_role"]
+app.secret_key = os.getenv("SECRET_KEY")
+discord_client_id = os.getenv("DISCORD_CLIENT_ID")
+discord_client_secret = os.getenv("DISCORD_CLIENT_SECRET")
+discord_redirect_uri = os.getenv("DISCORD_REDIRECT_URI")
+github_client_id = os.getenv("GITHUB_CLIENT_ID")
+github_client_secret = os.getenv("GITHUB_CLIENT_SECRET")
+github_redirect_uri = os.getenv("GITHUB_REDIRECT_URI")
+github_discord_redirect_uri = os.getenv("GITHUB_DISCORD_REDIRECT_URI")
+discord_token = os.getenv("DISCORD_TOKEN")
+send_gift_role = os.getenv("SEND_GIFT_ROLE")
+guild_ID = os.getenv("GUILD_ID")
+# 將字串轉換為列表
+if send_gift_role:
+    send_gift_role = [str(role_id) for role_id in send_gift_role.split(",")]
+else:
+    send_gift_role_list = []
 
 
 @app.errorhandler(404)
@@ -61,7 +68,6 @@ def login():
         params["state"] = redirurl
     # 將參數進行 URL 編碼並組合成最終的 URL
     urlencoded = urlencode(params)
-    print(f"{base_url}?\n\n{urlencoded}")
     return redirect(f"{base_url}?{urlencoded}")
 
 
@@ -74,15 +80,13 @@ def logout():
 @app.route("/api/mlist")
 def listt():
     if not session:
-        return jsonify({"resulet": "you must loggin", "status": 403})
+        return jsonify({"result": "you must login", "status": 403})
     api_admin = session.get(
         "user"
     )  # <class 'werkzeug.local.LocalProxy'> {'avatar': 'https://cdn.discordapp.com/avatars/898141506588770334/a_c81acdd4a925993d053a6fe9ed990c14.png', 'id': '898141506588770334', 'name': 'iach526526'}
     api_admin_id = api_admin.get("id")
     headers = {"Authorization": f"Bot {discord_token}"}
-    url = (
-        f"https://discord.com/api/v10/guilds/1203338928535379978/members/{api_admin_id}"
-    )
+    url = f"https://discord.com/api/v10/guilds/{guild_ID}/members/{api_admin_id}"
     response = requests.get(url, headers=headers, timeout=10)
     user_data = response.json()
     if response.status_code != 200:
@@ -102,127 +106,101 @@ def listt():
 
 
 @app.route("/api/send/<int:target_user_id>")
+# api/send/{recipient}?gift_type={電電點|抽獎券}count={count}
 def send(target_user_id):
     if not session:
-        return jsonify({"resulet": "you must loggin", "status": 403})
+        return jsonify({"result": "you must login", "status": 403})
     try:
         api_admin = session.get(
             "user"
         )  # <class 'werkzeug.local.LocalProxy'> {'avatar': 'https://cdn.discordapp.com/avatars/898141506588770334/a_c81acdd4a925993d053a6fe9ed990c14.png', 'id': '898141506588770334', 'name': 'iach526526'}
         api_admin_id = api_admin.get("id")
         api_admin_name = api_admin.get("name")
-        headers = {"Authorization": f"Bot {discord_token}"}
-        url = f"https://discord.com/api/v10/guilds/1203338928535379978/members/{api_admin_id}"
-        response = requests.get(url, headers=headers, timeout=10)
-        user_data = response.json()
-        if response.status_code != 200:
-            return (
-                jsonify({"error": "Failed to fetch user information"}),
-                response.status_code,
+        discord_api = Apis(discord_token, guild_ID)
+        request_admin = discord_api.get_user(api_admin_id)
+        gift_type = request.args.get("gift_type", "電電點")  # 預設為"電電點"
+        gift_amount = request.args.get("count", 1)  # 預設數量為1
+        if "error" in request_admin:
+            # 如果有錯誤，返回錯誤訊息和詳細報錯
+            return jsonify(
+                {
+                    "result": "Failed to fetch user information in admin id",
+                    "status": 500,
+                    "error_details": request_admin.get("details"),
+                }
             )
-        if send_gift_role not in user_data.get("roles", []):
+        admin_roles = request_admin.get("roles", [])
+        # 確保發起人有權限發送禮物
+        if set(send_gift_role) & set(admin_roles) == set():
             return jsonify(
                 {"result": "You do not have permission to use this", "status": 403}
             )
-        gift_type = request.args.get("gift_type", "電電點")  # 預設為"電電點"
         if gift_type not in ["電電點", "抽獎券"]:
             return jsonify({"result": "Invalid gift type", "status": 400})
-        count = request.args.get("count", 1)  # 預設數量為1
         try:
-            count = int(count)  # 確保 count 是整數
+            gift_amount = int(gift_amount)  # 確保 count 是整數
         except ValueError:
             return jsonify({"result": "Invalid count value", "status": 400})
-        print(gift_type, count)
-        url = f"https://discord.com/api/v10/guilds/1203338928535379978/members/{target_user_id}"
-        response = requests.get(url, headers=headers, timeout=10)
-        user_data = response.json()
-        if response.status_code != 200:
-            # 確保 URL 的 target_user_id 在伺服器裡面
-            return (
-                jsonify({"error": "Failed to fetch user information in tg id"}),
-                response.status_code,
+        # 確保目標用戶存在
+        user_data = discord_api.get_user(target_user_id)
+        if "error" in user_data:
+            # 如果有錯誤，返回錯誤訊息和詳細信息
+            return jsonify(
+                {
+                    "result": "Failed to fetch user information in target id (which is in url path)",
+                    "status": 500,
+                    "error_details": request_admin.get("details"),
+                }
             )
         # 送禮物
+        user_name = user_data["user"]["username"]
         try:
-            url = "https://discord.com/api/v10/users/@me/channels"
-            headers = {
-                "Authorization": f"Bot {discord_token}",
-                "Content-Type": "application/json",
-            }
-            json_data = {"recipient_id": target_user_id}
-        except requests.RequestException as e:
-            return jsonify(
-                {"result": "interal server error", "status": 500, "error": str(e)}
-            )
-        except Exception as e:
-            return jsonify(
-                {"result": "interal server error", "status": 500, "error": str(e)}
-            )
-        response = requests.post(url, headers=headers, json=json_data, timeout=10)
-        dm_channel = response.json()
-        dm_room = dm_channel["id"]
-        url = f"https://discord.com/api/v10/channels/{dm_room}/messages"
-        # 發送按鈕訊息
-        headers = {
-            "Authorization": f"Bot {discord_token}",
-            "Content-Type": "application/json",
-        }
-        embed = {
-            "title": f"你收到了 {count} {gift_type}!",
-            "color": 3447003,  # （藍色）
-            "description": ":gift:",
-        }
-        button = {
-            "type": 1,
-            "components": [
-                {
-                    "type": 2,
-                    "label": "前往確認",
-                    "style": 5,  # `5` 表示 Link Button
-                    "url": "https://store.scaict.org",  # 要導向的連結
-                }
-            ],
-        }
-        json_data = {
-            "embeds": [embed],
-            "components": [button],
-            "tts": False,  # Text-to-speech, 默認為 False
-        }
-        try:
-            response = requests.post(url, headers=headers, json=json_data, timeout=10)
+            new_gift = Gift(
+                discord_token, guild_ID, target_user_id
+            )  # create a new gift object
+            if new_gift.dm_room is None:
+                return jsonify(
+                    {
+                        "result": "Failed to create DM channel",
+                        "status": 500,
+                        "error": new_gift.error_msg,
+                    }
+                )
+            message_id = new_gift.send_gift(gift_type, gift_amount)
             connect, cursor = link_sql()
-            message_id = response.json().get("id")
-            print(message_id)
             if not user_id_exists(target_user_id, "user", cursor):
                 cursor.execute(
                     "INSERT INTO user (uid) VALUE(%s)", (target_user_id,)
                 )  # 這裡要調用 api 去抓使用者名稱和 Mail
             cursor.execute(
                 "INSERT into gift (btnID,type,count,recipient,received,sender) VALUE(%s,%s,%s,%s,%s,%s)",
-                (message_id, gift_type, count, target_user_id, True, api_admin_name),
+                (
+                    message_id,
+                    gift_type,
+                    gift_amount,
+                    user_name,
+                    True,
+                    api_admin_name,
+                ),
             )
             gift_type = "point" if gift_type == "電電點" else "ticket"
             query = f"update user set {gift_type}={gift_type}+%s where uid=%s"
-            cursor.execute(query, (count, target_user_id))
+            cursor.execute(query, (gift_amount, target_user_id))
             end(connect, cursor)
+
         except Exception as e:
             return jsonify(
                 {
-                    "result": "interal server error(SQL) when insert gift",
+                    "result": "internal server error(SQL) when insert gift",
                     "status": 500,
                     "error": str(e),
                 }
             )
-            # 待辦：用戶端那裏也要提示
-        response = requests.post(url, headers=headers, json=json_data, timeout=10)
-        if response.status_code != 200:
-            return jsonify(
-                {"error": "Failed to send message", "status": response.status_code}
-            )
         return jsonify({"result": "success", "status": 200})
     except Exception as e:
+        traceback.print_exc()
         return jsonify(
-            {"result": "interal server error", "status": 500, "error": str(e)}
+            {"result": "internal server error", "status": 500, "error": str(e)}
         )
 
 
@@ -302,7 +280,6 @@ def discord_callback():
     response = requests.post(
         "https://discord.com/api/oauth2/token", data=data, headers=headers
     )
-    print(response.json())
     access_token = response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     # pylint: disable-next = missing-timeout
@@ -316,7 +293,7 @@ def discord_callback():
     return redirect(url_for("star_uwu"))
 
 
-# make filder static in templates/static static
+# make filter static in templates/static static
 @app.route("/static/<path:filename>")
 def staticfiles(path):
     return send_from_directory("static", path)
@@ -390,7 +367,7 @@ def product_list():
 
 @app.route("/buyProduct", methods=["POST"])
 def buy_product():
-    # Recieve POST request, get product id and check if logged in
+    # Receive POST request, get product id and check if logged in
     discord_user = session.get("user")
     if not discord_user:
         return "請重新登入"
@@ -501,7 +478,6 @@ def github_callback():
     }
     # pylint: disable-next = missing-timeout
     response = requests.post(token_url, headers=headers, data=data)
-    print(response.json())
     session["access_token"] = response.json()["access_token"]
 
     return redirect(url_for("star_uwu"))
@@ -515,7 +491,7 @@ def star_uwu():
     if "access_token" not in session:
         print("GitHub access token not found!")
         return redirect(url_for("github_login"))
-    # if dc not loggin
+    # if dc not login
     discord_user = session.get("user")
     if not discord_user:
         # pylint: disable-next = line-too-long
@@ -527,7 +503,6 @@ def star_uwu():
     headers = {"Authorization": f"token {session['access_token']}"}
     # pylint: disable-next = missing-timeout
     user_response = requests.get(user_url, headers=headers)
-    print(user_response.json())
     github_username = user_response.json()["login"]
     github_email = user_response.json()["email"]
     connection, cursor = link_sql()  # SQL 會話
@@ -540,20 +515,18 @@ def star_uwu():
     repo_name = "SCAICT-uwu"
     star_url = f"https://api.github.com/user/starred/{repo_owner}/{repo_name}"
     headers = {"Authorization": f"token {session['access_token']}"}
-    print(session["access_token"])
     # Sending a PUT request to star the repository
     # pylint: disable-next = missing-timeout
     response = requests.put(star_url, headers=headers)
-    print(response.text)
     # Checking the response status and returning an appropriate message
     if response.ok:
         print(f"Successfully starred {repo_owner}/{repo_name}! {response}")
         connection, cursor = link_sql()  # SQL 會話
         if not user_id_exists(
             discord_user["id"], "user", cursor
-        ):  # 該 uesr id 不在user表格內，插入該筆使用者資料
+        ):  # 該 user id 不在user表格內，插入該筆使用者資料
             insert_user(discord_user["id"], "user", cursor)
-        # if already starred. liveuwu is 1
+        # if already starred. loveuwu is 1
         if read(discord_user["id"], "loveuwu", cursor):
             end(connection, cursor)
             return render_template("already.html")

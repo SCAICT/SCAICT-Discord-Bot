@@ -11,25 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.11" ]
+        python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install -r requirements_dev.txt
-    - name: Formatting the code with Black
-      run: |
-        black $(git ls-files '*.py')
-    - name: Add, commit and push
-      run: |
-        git config --local user.name "github-actions[bot]"
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add *
-        git diff-index --quiet HEAD || git commit -m "Format \"$(git show -s --format=%s)\" using Black"
-        git diff-index --quiet HEAD || git push
+      - if: github.event_name != 'pull_request'
+        uses: actions/checkout@v4
+      - if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
+          pip install -e .[dev]
+      - name: Formatting the code with Black
+        run: |
+          black $(git ls-files '*.py')
+      - name: Git config
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Git diff
+        run: |
+          git diff HEAD || true
+      - name: Git add
+        run: |
+          git add *
+      - name: Git commit & push
+        run: |
+          git diff-index --quiet HEAD || ( git commit -m "Format \"$(git show -s --format=%s)\" using Black" && git push )

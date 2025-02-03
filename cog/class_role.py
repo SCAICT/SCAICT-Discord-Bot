@@ -124,7 +124,7 @@ class ClassRole(Build):
             await ctx.send(embed=embed, view=self.TokenVerifyButton())
 
     @discord.slash_command(description="新增主題課程")
-    # pylint: disable-next = too-many-arguments
+    # pylint: disable-next = too-many-arguments, too-many-positional-arguments
     async def add_class(
         self, ctx, class_code: str, name: str, theme: str, teacher: str, time: str
     ):

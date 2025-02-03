@@ -1,1 +1,25 @@
-{}
+{
+	"@metadata": {
+		"authors": [
+			"Each Chen",
+			"os24",
+			"Winston Sung"
+		]
+	},
+	"course-token-redeem-button-label": "請輸入課程代碼",
+	"course-token-modal-title": "請輸入課程代碼",
+	"course-token-modal-input-text-label": "請輸入課程代碼",
+	"course-token-modal-redeemed-role": "已領取{0}身分組",
+	"course-token-modal-redeemed-course-theme": "課程主題：{0}",
+	"course-token-modal-redeemed-user": "使用者：{0}",
+	"course-token-modal-redeemed-lecturer": "講師：{0}",
+	"course-token-modal-redeemed-course-time": "課程時間：{0}",
+	"course-token-modal-failed": "領取失敗",
+	"course-token-modal-failed-user": "使用者：{0}",
+	"course-token-modal-failed-hint": "請重新確認課程代碼",
+	"course-send-redeem-embed-command-desc": "傳送課程代碼兌換鈕",
+	"course-redeem-embed-enter-token": "點下方按鈕輸入token",
+	"course-redeem-embed-redeem-role": "領取課程身分組！",
+	"course-create-theme-course-command-desc": "新增主題課程",
+	"course-create-theme-course-created": "已將{0}新增至 JSON；主題：{1}，講師：{2}，時間：{3}"
+}

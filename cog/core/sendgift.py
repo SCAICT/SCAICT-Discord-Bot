@@ -36,9 +36,8 @@ async def send_gift_button(
             )
             end(connection, cursor)
         except Exception as e:
-            raise DBError("無法成功插入禮物資料進資料庫") from e
-        finally:
             end(connection, cursor)
+            raise DBError("無法成功插入禮物資料進資料庫") from e
 
     try:
         await target_user.send(embed=embed)

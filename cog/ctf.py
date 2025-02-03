@@ -279,6 +279,7 @@ class CTF(Build):
 
     @ctf_commands.command(name="create", description="新題目")
     # 新增題目
+    # pylint: disable-next = too-many-positional-arguments
     async def create(
         self,
         ctx,
